@@ -27,7 +27,13 @@ ENABLE_CUSTOM_BACKUPS=yes
 # Will produce a gzipped plain-format backup if set to "yes"
 ENABLE_PLAIN_BACKUPS=yes
  
- 
+# Will produce a gzipped tarball-format backup if set to "yes"
+ENABLE_TAR_GZ_BACKUPS=yes
+
+# Will produce gzipped sql file containing the cluster globals, like users and passwords, if set to "yes"
+ENABLE_GLOBALS_BACKUPS=yes
+
+
 #### SETTINGS FOR ROTATED BACKUPS ####
  
 # Which day to take the weekly backup from (1-7 = Monday-Sunday)

@@ -66,6 +66,27 @@ if ! mkdir -p $FINAL_BACKUP_DIR; then
 fi;
  
  
+#######################
+### GLOBALS BACKUPS ###
+#######################
+ 
+echo -e "\n\nPerforming globals backup"
+echo -e "--------------------------------------------\n"
+ 
+if [ $ENABLE_GLOBALS_BACKUPS = "yes" ]
+then
+        echo "Globals backup"
+ 
+        if ! pg_dumpall -g -h "$HOSTNAME" -U "$USERNAME" | gzip > $FINAL_BACKUP_DIR"globals".sql.gz.in_progress; then
+                echo "[!!ERROR!!] Failed to produce globals backup" 1>&2
+        else
+                mv $FINAL_BACKUP_DIR"globals".sql.gz.in_progress $FINAL_BACKUP_DIR"globals".sql.gz
+        fi
+else
+	echo "None"
+fi
+ 
+ 
 ###########################
 ### SCHEMA-ONLY BACKUPS ###
 ###########################
@@ -134,7 +155,16 @@ do
 		fi
 	fi
  
+	if [ $ENABLE_TAR_GZ_BACKUPS = "yes" ]
+	then
+		echo "Tarball backup of $DATABASE"
+
+		if ! pg_dump -Ft -h "$HOSTNAME" -U "$USERNAME" "$DATABASE" | gzip > $FINAL_BACKUP_DIR"$DATABASE".sql.gz.in_progress; then
+			echo "[!!ERROR!!] Failed to produce gzipped tarball backup of database $DATABASE" 1>&2
+		else
+			mv $FINAL_BACKUP_DIR"$DATABASE".sql.gz.in_progress $FINAL_BACKUP_DIR"$DATABASE".sql.gz
+		fi
+	fi
 done
  
 echo -e "\nAll database backups complete!"
-
