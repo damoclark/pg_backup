@@ -137,7 +137,16 @@ function perform_backups()
 				mv $FINAL_BACKUP_DIR"$DATABASE".custom.in_progress $FINAL_BACKUP_DIR"$DATABASE".custom
 			fi
 		fi
- 
+		if [ $ENABLE_TAR_GZ_BACKUPS = "yes" ]
+		then
+			echo "Tarball backup of $DATABASE"
+
+			if ! pg_dump -Ft -h "$HOSTNAME" -U "$USERNAME" "$DATABASE" | gzip > $FINAL_BACKUP_DIR"$DATABASE".sql.gz.in_progress; then
+				echo "[!!ERROR!!] Failed to produce gzipped tarball backup of database $DATABASE" 1>&2
+			else
+				mv $FINAL_BACKUP_DIR"$DATABASE".sql.gz.in_progress $FINAL_BACKUP_DIR"$DATABASE".sql.gz
+			fi
+		fi
 	done
  
 	echo -e "\nAll database backups complete!"
